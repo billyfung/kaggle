@@ -1,9 +1,10 @@
 #titanic kaggle competition 
 #want to predict survival 
 #891 observations
-train <- read.csv("~/Documents/Kaggle-local/kaggle/Titanic/train.csv")
+rawtrain <- read.csv("~/Documents/Kaggle-local/kaggle/Titanic/train.csv")
 #418 observations
-test <- read.csv("~/Documents/Kaggle-local/kaggle/Titanic/test.csv")
+rawtest <- read.csv("~/Documents/Kaggle-local/kaggle/Titanic/test.csv")
+missmap(rawtrain, main="Training Data Missing", legend=FALSE)
 
 summary(train)
 #we can see that missing values for age, use mice to fill in
@@ -34,3 +35,4 @@ table(glmPredict)
 test$Survived <- glmPredict
 submission <- test[,c(1,12)]
 write.csv(submission, 'submission.csv', row.names =F)
+#0.75598 for first submission
