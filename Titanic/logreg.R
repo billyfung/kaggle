@@ -1,9 +1,17 @@
 #titanic kaggle competition 
 #want to predict survival 
 #891 observations
+library(ggplot2)
 rawtrain <- read.csv("~/Documents/Kaggle-local/kaggle/Titanic/train.csv")
 #418 observations
 rawtest <- read.csv("~/Documents/Kaggle-local/kaggle/Titanic/test.csv")
+rawtrain$Survived = factor(rawtrain$Survived)
+m <- ggplot(rawtrain, aes(x=Age))
+m + geom_histogram(aes(y = ..count.., fill=Survived), binwidth = 5) + theme_classic()+ scale_x_continuous(breaks=seq(0, 100, 10))+
+  ggtitle("Survival of 891 Passengers based on Cabin Class") + scale_y_continuous(breaks=seq(0, 100, 10)) + facet_grid(Pclass~Sex)+
+  scale_fill_discrete(name="Survived",
+                      labels=c("No", "Yes")) 
+
 missmap(rawtrain, main="Training Data Missing", legend=FALSE)
 
 summary(train)
@@ -17,7 +25,7 @@ library(Amelia)
 noms <- c('Pclass', 'Sex', 'SibSp', 'Parch')
 ords <- c()
 idvars <- c('Name', 'Cabin', 'Embarked', 'Ticket', 'Fare')
-a.out <- amelia(train, noms = noms, ords = ords, idvars = idvars)
+a.out <- amelia(rawtrain, noms = noms, ords = ords, idvars = idvars)
 a2.out <- amelia(test, noms = noms, ords = ords, idvars = idvars)
 
 imputedAge <- a.out$imputations$imp4$Age
@@ -34,5 +42,16 @@ table(glmPredict)
 #after filling in data with imputation, predict 154 survive, 264 death
 test$Survived <- glmPredict
 submission <- test[,c(1,12)]
-write.csv(submission, 'submission.csv', row.names =F)
+write.csv(submission, 'rf_submission.csv', row.names =F)
 #0.75598 for first submission
+
+#try random forest
+library(party)
+train$Fare[train$Fare == 0] <- median(train$Fare, na.rm=TRUE)
+
+rf <- cforest(Survived~Pclass+Sex+Age+Fare+SibSp+Parch, data=train, controls =cforest_unbiased(ntree=1000, mtry=3))
+test$Survived <- predict(rf, test, OOB = TRUE, type = 'response')
+rfPredict <- ifelse(test$Survived >0.5, 1, 0)
+test$Survived <- rfPredict
+#2nd attempt, not much done to data
+#2371 place, 0.77512 correct
