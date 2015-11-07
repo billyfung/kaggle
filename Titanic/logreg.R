@@ -26,11 +26,12 @@ noms <- c('Pclass', 'Sex', 'SibSp', 'Parch')
 ords <- c()
 idvars <- c('Name', 'Cabin', 'Embarked', 'Ticket', 'Fare')
 a.out <- amelia(rawtrain, noms = noms, ords = ords, idvars = idvars)
-a2.out <- amelia(test, noms = noms, ords = ords, idvars = idvars)
+a2.out <- amelia(rawtest, noms = noms, ords = ords, idvars = idvars)
 
-imputedAge <- a.out$imputations$imp4$Age
-imputedAgeTest <- a2.out$imputations$imp5$Age
-
+imputedAge <- a.out$imputations$imp3$Age
+imputedAgeTest <- a2.out$imputations$imp3$Age
+train <- rawtrain
+test <- rawtest
 train$Age <- imputedAge
 test$Age <- imputedAgeTest
 model <- glm(Survived ~ Age + Sex + Pclass, family = binomial, data=train)
@@ -50,8 +51,11 @@ library(party)
 train$Fare[train$Fare == 0] <- median(train$Fare, na.rm=TRUE)
 
 rf <- cforest(Survived~Pclass+Sex+Age+Fare+SibSp+Parch, data=train, controls =cforest_unbiased(ntree=1000, mtry=3))
-test$Survived <- predict(rf, test, OOB = TRUE, type = 'response')
+Survived <- predict(rf, test, OOB = TRUE, type = 'response')
+summary(Survived)
 rfPredict <- ifelse(test$Survived >0.5, 1, 0)
 test$Survived <- rfPredict
 #2nd attempt, not much done to data
 #2371 place, 0.77512 correct
+
+library(ROCR)
