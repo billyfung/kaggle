@@ -58,4 +58,3 @@ test$Survived <- rfPredict
 #2nd attempt, not much done to data
 #2371 place, 0.77512 correct
 
-library(ROCR)
