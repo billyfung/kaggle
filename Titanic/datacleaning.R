@@ -41,23 +41,18 @@ full$Embarked[which(is.na(full$Embarked))] <- 'S'
 table(rawfull$FamilySize, rawfull$Survived)
 #we can see that families/couples have higher survival rate
 #so far we know that women and children more likely to survive, especially in families
+j <- ggplot(train, aes(x=Age, y=..count..))
+j + geom_histogram(aes(fill=Survived)) + facet_grid(~Sex)
+
+full$Survived <- as.factor(full$Survived)
+full$FamilySize <- as.factor(full$FamilySize)
+
+full$dibs <- "No"
+full$dibs[which(full$Sex == "female" | full$Age < 20)] <- "Yes"
+full$dibs <- as.factor(full$dibs)
+full$FamilyID <- as.factor(full$FamilyID)
+
 #split back into testing and training
 test <- full[full$Survived=='NA',]
 train <- subset(full, full$Survived!='NA')
 
-j <- ggplot(train, aes(x=Age, y=..count..))
-j + geom_histogram(aes(fill=Survived)) + facet_grid(~Sex)
-train$Survived <- as.factor(train$Survived)
-train$FamilySize <- as.factor(train$FamilySize)
-
-train$dibs <- "No"
-train$dibs[which(train$Sex == "female" | train$Age < 20)] <- "Yes"
-train$dibs <- as.factor(train$dibs)
-train$FamilyID <- as.factor(train$FamilyID)
-
-
-test$Survived <- as.factor(test$Survived)
-test$FamilySize <- as.factor(test$FamilySize)
-test$dibs <- "No"
-test$dibs[which(test$Sex == "female" | test$Age < 20)] <- "Yes"
-test$dibs <- as.factor(test$dibs)
