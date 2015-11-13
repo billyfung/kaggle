@@ -50,11 +50,14 @@ write.csv(submission, 'rf_submission.csv', row.names =F)
 library(party)
 train$Fare[train$Fare == 0] <- median(train$Fare, na.rm=TRUE)
 
-rf <- cforest(Survived~Pclass+Sex+Age+Fare+SibSp+Parch, data=train, controls =cforest_unbiased(ntree=1000, mtry=3))
+rf <- cforest(Survived~Pclass+Sex+Age+Fare+dibs+FamilySize+FamilyID+Fare+Embarked, data=train, controls =cforest_unbiased(ntree=1000, mtry=3))
 Survived <- predict(rf, test, OOB = TRUE, type = 'response')
 summary(Survived)
 rfPredict <- ifelse(test$Survived >0.5, 1, 0)
-test$Survived <- rfPredict
+test$Survived <- Survived
 #2nd attempt, not much done to data
 #2371 place, 0.77512 correct
 
+submission <- test[,c("PassengerId", "Survived")]
+write.csv(submission, 'rf2_submission.csv', row.names =F)
+#3rd attempt 0.80383

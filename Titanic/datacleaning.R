@@ -47,7 +47,17 @@ train <- subset(full, full$Survived!='NA')
 
 j <- ggplot(train, aes(x=Age, y=..count..))
 j + geom_histogram(aes(fill=Survived)) + facet_grid(~Sex)
+train$Survived <- as.factor(train$Survived)
+train$FamilySize <- as.factor(train$FamilySize)
 
 train$dibs <- "No"
 train$dibs[which(train$Sex == "female" | train$Age < 20)] <- "Yes"
 train$dibs <- as.factor(train$dibs)
+train$FamilyID <- as.factor(train$FamilyID)
+
+
+test$Survived <- as.factor(test$Survived)
+test$FamilySize <- as.factor(test$FamilySize)
+test$dibs <- "No"
+test$dibs[which(test$Sex == "female" | test$Age < 20)] <- "Yes"
+test$dibs <- as.factor(test$dibs)
