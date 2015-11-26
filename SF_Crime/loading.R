@@ -12,7 +12,7 @@ m <- ggplot(crimes, aes(x=reorder(Category,Count), y=Count))
 
 m + geom_bar(stat='identity') + coord_flip()+xlab("") +facet_wrap(~DayOfWeek,ncol=4) +theme(legend.position = "none")
 
-#want to see which district has the most crimes
+#want to see which pddistrict has the most crimes
 p <- ggplot(crimes, aes(x=PdDistrict, y = Count)) + geom_bar(stat="identity") +xlab("District")+ylab("Number of Reported Crimes")
 p + theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0.5))
 
@@ -35,3 +35,10 @@ d + geom_bar(stat='identity') + facet_wrap(~Month, ncol=6) + coord_flip()
 
 e <- ggplot(crime_month, aes(x=Month, y=Count))
 e + geom_bar(stat='identity') + ylab("Number of Reported Crimes")
+
+crime_day <- train %>% group_by(Category, Day) %>% summarise(Count = n())
+a <- ggplot(crime_day, aes(x=Day, y=Count))
+a + geom_bar(stat='identity')+ ylab("Number of Reported Crimes")
+
+j <- ggplot(crimes, aes(x=DayOfWeek, y=Count))
+j + geom_bar(stat='identity') + ylab("Number of Reported Crimes")
