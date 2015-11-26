@@ -28,9 +28,10 @@ train$Month <- as.factor((month(train$Dates)))
 train$Day <- as.factor(day(train$Dates))
 train$Hour <- as.factor(hour(train$Dates))
 
+#look at some graphs of months and crime
 crime_month <- train %>% group_by(Category, Month) %>% summarise(Count = n())
 d <- ggplot(crime_month, aes(x=Category, y=Count))
 d + geom_bar(stat='identity') + facet_wrap(~Month, ncol=6) + coord_flip()
 
 e <- ggplot(crime_month, aes(x=Month, y=Count))
-e + geom_bar(stat='identity') 
+e + geom_bar(stat='identity') + ylab("Number of Reported Crimes")
