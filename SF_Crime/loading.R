@@ -43,6 +43,16 @@ a + geom_bar(stat='identity')+ ylab("Number of Reported Crimes")
 j <- ggplot(crimes, aes(x=DayOfWeek, y=Count))
 j + geom_bar(stat='identity') + ylab("Number of Reported Crimes")
 
+train$DayOfWeek <- factor(train$DayOfWeek, levels=c("Monday", "Tuesday", "Wednesday", 
+                                          "Thursday", "Friday", "Saturday", "Sunday"), ordered=T)
+
+cbPalette <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+
 #hmm let's check out the hour when crimes are reported
-h <- ggplot(train, aes(x=train$Hour))
-h + geom_histogram() + xlab("Hour") + ylab("Number of Reported Crimes")
+h <- ggplot(train, aes(x=train$Hour, y = ..count..))
+h + geom_histogram(aes(fill=DayOfWeek)) + xlab("Hour") + ylab("Number of Reported Crimes")+
+  scale_fill_manual(values=cbPalette)+
+  facet_wrap(~DayOfWeek, ncol=1)+
+  theme(legend.position = "none")
+
+
