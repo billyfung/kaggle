@@ -42,3 +42,7 @@ a + geom_bar(stat='identity')+ ylab("Number of Reported Crimes")
 
 j <- ggplot(crimes, aes(x=DayOfWeek, y=Count))
 j + geom_bar(stat='identity') + ylab("Number of Reported Crimes")
+
+#hmm let's check out the hour when crimes are reported
+h <- ggplot(train, aes(x=train$Hour))
+h + geom_histogram() + xlab("Hour") + ylab("Number of Reported Crimes")
