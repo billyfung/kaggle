@@ -5,8 +5,9 @@ library(dplyr)
 test <- read.csv("D:/Documents/kaggle/SF_Crime/test.csv")
 train <- read.csv("D:/Documents/kaggle/SF_Crime/train.csv")
 #dplyr magic!
+counts <- summarise(group_by(train, Category), Counts=length(Category))
+counts <- counts[order(-counts$Counts),]
 crimes<- train %>% group_by(Category, DayOfWeek) %>% summarise(Count = n())
-
 #plot 
 m <- ggplot(crimes, aes(x=reorder(Category,Count), y=Count))
 
@@ -55,4 +56,22 @@ h + geom_histogram(aes(fill=DayOfWeek)) + xlab("Hour") + ylab("Number of Reporte
   facet_wrap(~DayOfWeek, ncol=1)+
   theme(legend.position = "none")
 
+#let's map crime locations
+library(ggmap)
+map <- get_map(location = 'Mission Dolores Park, San Francisco', zoom = 12, source="osm", color = "bw")
+#lets look at the top 3 crimes for now
+top3 <- train[train$Category %in% counts$Category[c(1,3:4)],]
 
+sfmap <- ggmap(map)
+sfmap +  geom_point(data=top3, aes(x=X, y=Y, color=factor(Category)), alpha=0.05) +
+  scale_fill_manual(values=cbPalette)+
+  guides(colour = guide_legend(override.aes = list(alpha=1.0, size=6.0),
+                               title="Type of Crime"))+
+  theme(axis.line=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank())
+
+library(plotly)
