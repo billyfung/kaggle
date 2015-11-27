@@ -63,7 +63,7 @@ map <- get_map(location = 'Mission Dolores Park, San Francisco', zoom = 12, sour
 top3 <- train[train$Category %in% counts$Category[c(1,3:4)],]
 
 sfmap <- ggmap(map)
-sfmap +  geom_point(data=top3, aes(x=X, y=Y, color=factor(Category)), alpha=0.05) +
+ sf <- sfmap +  geom_point(data=top3, aes(x=X, y=Y, color=factor(Category)), alpha=0.05) +
   scale_fill_manual(values=cbPalette)+
   guides(colour = guide_legend(override.aes = list(alpha=1.0, size=6.0),
                                title="Type of Crime"))+
@@ -73,5 +73,15 @@ sfmap +  geom_point(data=top3, aes(x=X, y=Y, color=factor(Category)), alpha=0.05
         axis.ticks=element_blank(),
         axis.title.x=element_blank(),
         axis.title.y=element_blank())
-
+#(gg <- ggplotly(sf)) this doesn't work so well on my computer
 library(plotly)
+g <- list(
+  scope = 'usa',
+  projection = list(type = 'albers usa'),
+  showland = TRUE
+)
+plot_ly(top3, lat = X, lon = Y, mode = 'markers',
+        type = 'scattergeo') %>%
+  layout(title = 'Top 3 Crime Map', geo = g)
+
+plot_ly(midwest, x = percollege, color = state, type = "box")
